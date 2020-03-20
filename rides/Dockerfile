@@ -1,0 +1,8 @@
+
+FROM python
+ADD . /todo
+WORKDIR /todo
+RUN pip install -r requirements.txt
+CMD [ "ride_management.py" ]
+ENV TEAM_NAME "CC_1537_1602_1654_1667"
+EXPOSE 80
