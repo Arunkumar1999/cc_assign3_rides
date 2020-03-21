@@ -114,7 +114,6 @@ def read_database():
 	
 	resp=cursor.execute(sql)
 	resp_check=resp.fetchall()
-	print(resp_check[0],"length of resp_check")
 	if(len(resp_check) == 0):
 		resp_dict["response"]=0
 		return json.dumps(resp_dict)
