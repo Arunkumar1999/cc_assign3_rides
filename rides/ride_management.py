@@ -114,7 +114,7 @@ def read_database():
 	
 	resp=cursor.execute(sql)
 	resp_check=resp.fetchall()
-	print(resp_check[0],"length of resp_check")
+	#print(resp_check[0],"length of resp_check")
 	if(len(resp_check) == 0):
 		resp_dict["response"]=0
 		return json.dumps(resp_dict)
@@ -254,7 +254,7 @@ def insert_rider():
 	if(name not in read_res.json()):
 		abort(400,"user doesn't exist")
 	
-	res=requests.post("http://127.0.0.1:80/api/v1/db/write",json={"insert":d,"column":["name","timest","source","desti"],"table":"rides","indicate":"0"})	
+	res=requests.post("http://3.87.247.57:80/api/v1/db/write",json={"insert":d,"column":["name","timest","source","desti"],"table":"rides","indicate":"0"})	
 	if(res.json()==0):
 		abort(400,"user already exists")
 
@@ -267,7 +267,7 @@ def delete_rideId(rideId):
 	if(request.method!="DELETE"):
 		abort(405,"method not allowed")
 	
-	res=requests.post("http://127.0.0.1:80/api/v1/db/write",json={"table":"rides","delete":rideId,"column":"rideid","indicate":"1"})
+	res=requests.post("http://3.87.247.57:80/api/v1/db/write",json={"table":"rides","delete":rideId,"column":"rideid","indicate":"1"})
 	if(res.json()==0):
 		abort(400,"rideId does not  exists")
 	elif(res.json()==1):
@@ -289,11 +289,11 @@ def join_ride(rideId):
 	if(name not in read_res.json()):
 		abort(400,"user doesn't exist")
 	d=[rideId,name]
-	rideid_check=requests.post("http://127.0.0.1:80/api/v1/db/read",json={"insert":d,"column":["rideid","name","source","desti"],"table":"rides","where":["rideid"]})
+	rideid_check=requests.post("http://3.87.247.57:80/api/v1/db/read",json={"insert":d,"column":["rideid","name","source","desti"],"table":"rides","where":["rideid"]})
 	if(rideid_check.json().get("response")==0):
 		abort(400,"ride id doesn't exists")
 	
-	res=requests.post("http://127.0.0.1:80/api/v1/db/write",json={"insert":d,"column":["id","name"],"table":"rideusers","indicate":"0"})
+	res=requests.post("http://3.87.247.57:80/api/v1/db/write",json={"insert":d,"column":["id","name"],"table":"rideusers","indicate":"0"})
 	if(res.json()==0):
 		abort(400,"rideId does not  exists")
 	elif(res.json()==1):
@@ -309,12 +309,12 @@ def ride_details(rideId):
 	
 	d=[rideId]
 	user_list=[]
-	rideid_check=requests.post("http://127.0.0.1:80/api/v1/db/read",json={"insert":d,"column":["rideid","name","source","desti","timest"],"table":"rides","where":["rideid"]})
+	rideid_check=requests.post("http://3.87.247.57:80/api/v1/db/read",json={"insert":d,"column":["rideid","name","source","desti","timest"],"table":"rides","where":["rideid"]})
 	if(rideid_check.json().get("response")==0):
 		abort(400,"rideId does not  exists")
 	elif(rideid_check.json().get("response")==1):
 		
-		joined_users_check=requests.post("http://127.0.0.1:80/api/v1/db/read",json={"insert":d,"column":["id","name"],"table":"rideusers","where":["id"]})
+		joined_users_check=requests.post("http://3.87.247.57:80/api/v1/db/read",json={"insert":d,"column":["id","name"],"table":"rideusers","where":["id"]})
 
 
 		return json.dumps({"rideId":rideid_check.json().get("rideid"),
@@ -337,7 +337,7 @@ def upcoming_rides():
 	source=request.args.get('source')
 	destination=request.args.get('destination')
 	d=[source,destination]				
-	src_dest_check=requests.post("http://127.0.0.1:80/api/v1/db/read",json={"insert":d,"column":["rideid","name","source","desti","timest"],"table":"rides","where":['source','desti']})			
+	src_dest_check=requests.post("http://3.87.247.57:80/api/v1/db/read",json={"insert":d,"column":["rideid","name","source","desti","timest"],"table":"rides","where":['source','desti']})			
 	if(src_dest_check.json().get("response")==0):
 		return "no content to send",204,{"ContentType":"application/json"}
 	
@@ -359,7 +359,7 @@ def clear_db():
 	if(request.method!="POST"):
 		abort(405,"method not allowed")
 	
-	res=requests.post("http://127.0.0.1:80/api/v1/db/write",json={"indicate":"3"})	
+	res=requests.post("http://3.87.247.57:80/api/v1/db/write",json={"indicate":"3"})	
 	if(res.json()==0):
 		abort(400,"failed to clear")
 	elif(res.json()==1):
@@ -397,7 +397,7 @@ def ride_count():
 	
 	#d=[rideId]
 	user_list=[]
-	rideid_check=requests.post("http://127.0.0.1:80/api/v1/db/read",json={"insert":[],"column":["count(*) as count"],"table":"rides","where":[]})
+	rideid_check=requests.post("http://3.87.247.57:80/api/v1/db/read",json={"insert":[],"column":["count(*) as count"],"table":"rides","where":[]})
 	
 	if(rideid_check.json().get("response")==1):
 		print(rideid_check.json().get("count"),"ssss")
