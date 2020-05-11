@@ -8,7 +8,7 @@ from datetime import datetime
 app=Flask(__name__)
 cursor = sqlite3.connect("rideshare_of_rides.db")
 file=open("text.txt","w")
-file.write("%d %d"%(0,0))
+file.write("0")
 file.close()
 def fun():
 
@@ -16,16 +16,16 @@ def fun():
 		file=open("text.txt","r")
 		#print(file.readline()[0])
 		e=file.readline()
-		q=int(e[0])+1
-		print(q,e[1])
+		q=int(e)+1
+		print(q,"kkkk")
 		file.close()
 		file=open("text.txt","w")
-		file.write("%d %s"%(q,e[2]))		
+		file.write(str(q))		
 		#print("as")
 		#file.close()
 	except:
 		file=open("text.txt","w")
-		file.write("%d %d"%(0,0))		
+		file.write("0")		
 		#print("read")
 	file.close()
 
@@ -247,13 +247,13 @@ def insert_rider():
 		#print("hii")
 		abort(400,"invalid input")
 
-	read_res=requests.get("http://CC-Project-1507675041.us-east-1.elb.amazonaws.com:80/api/v1/users",headers={"Origin":"3.84.169.225"})
+	read_res=requests.get("http://CC-Project-1005740733.us-east-1.elb.amazonaws.com:80/api/v1/users",headers={"Origin":"18.212.35.29"})
 	if(read_res.json()==0):
 		abort(400,"no users to fetch")
 	if(name not in read_res.json()):
 		abort(400,"user doesn't exist")
 	
-	res=requests.post("http://18.212.183.73:80/api/v1/db/write",json={"insert":d,"column":["name","timest","source","desti"],"table":"rides","indicate":"0"})	
+	res=requests.post("http://18.234.100.70:80/api/v1/db/write",json={"insert":d,"column":["name","timest","source","desti"],"table":"rides","indicate":"0"})	
 	if(res.json()==0):
 		abort(400,"user already exists")
 
@@ -266,7 +266,7 @@ def delete_rideId(rideId):
 	if(request.method!="DELETE"):
 		abort(405,"method not allowed")
 	
-	res=requests.post("http://18.212.183.73:80/api/v1/db/write",json={"table":"rides","delete":rideId,"column":"rideid","indicate":"1"})
+	res=requests.post("http://18.234.100.70:80/api/v1/db/write",json={"table":"rides","delete":rideId,"column":"rideid","indicate":"1"})
 	if(res.json()==0):
 		abort(400,"rideId does not  exists")
 	elif(res.json()==1):
@@ -288,11 +288,11 @@ def join_ride(rideId):
 	if(name not in read_res.json()):
 		abort(400,"user doesn't exist")
 	d=[rideId,name]
-	rideid_check=requests.post("http://18.212.183.73:80/api/v1/db/read",json={"insert":d,"column":["rideid","name","source","desti"],"table":"rides","where":["rideid"]})
+	rideid_check=requests.post("http://18.234.100.70:80/api/v1/db/read",json={"insert":d,"column":["rideid","name","source","desti"],"table":"rides","where":["rideid"]})
 	if(rideid_check.json().get("response")==0):
 		abort(400,"ride id doesn't exists")
 	
-	res=requests.post("http://18.212.183.73:80/api/v1/db/write",json={"insert":d,"column":["id","name"],"table":"rideusers","indicate":"0"})
+	res=requests.post("http://18.234.100.70:80/api/v1/db/write",json={"insert":d,"column":["id","name"],"table":"rideusers","indicate":"0"})
 	if(res.json()==0):
 		abort(400,"rideId does not  exists")
 	elif(res.json()==1):
@@ -308,12 +308,12 @@ def ride_details(rideId):
 	
 	d=[rideId]
 	user_list=[]
-	rideid_check=requests.post("http://18.212.183.73:80/api/v1/db/read",json={"insert":d,"column":["rideid","name","source","desti","timest"],"table":"rides","where":["rideid"]})
+	rideid_check=requests.post("http://18.234.100.70:80/api/v1/db/read",json={"insert":d,"column":["rideid","name","source","desti","timest"],"table":"rides","where":["rideid"]})
 	if(rideid_check.json().get("response")==0):
 		abort(400,"rideId does not  exists")
 	elif(rideid_check.json().get("response")==1):
 		
-		joined_users_check=requests.post("http://18.212.183.73:80/api/v1/db/read",json={"insert":d,"column":["id","name"],"table":"rideusers","where":["id"]})
+		joined_users_check=requests.post("http://18.234.100.70:80/api/v1/db/read",json={"insert":d,"column":["id","name"],"table":"rideusers","where":["id"]})
 
 
 		return json.dumps({"rideId":rideid_check.json().get("rideid"),
@@ -336,7 +336,7 @@ def upcoming_rides():
 	source=request.args.get('source')
 	destination=request.args.get('destination')
 	d=[source,destination]				
-	src_dest_check=requests.post("http://18.212.183.73:80/api/v1/db/read",json={"insert":d,"column":["rideid","name","source","desti","timest"],"table":"rides","where":['source','desti']})			
+	src_dest_check=requests.post("http://18.234.100.70:80/api/v1/db/read",json={"insert":d,"column":["rideid","name","source","desti","timest"],"table":"rides","where":['source','desti']})			
 	if(src_dest_check.json().get("response")==0):
 		return "no content to send",204,{"ContentType":"application/json"}
 	
@@ -358,7 +358,7 @@ def clear_db():
 	if(request.method!="POST"):
 		abort(405,"method not allowed")
 	
-	res=requests.post("http://18.212.183.73:80/api/v1/db/write",json={"indicate":"3"})	
+	res=requests.post("http://18.234.100.70:80/api/v1/db/write",json={"indicate":"3"})	
 	if(res.json()==0):
 		abort(400,"failed to clear")
 	elif(res.json()==1):
@@ -374,7 +374,7 @@ def get_http_request():
 		file.close()
 	except:
 		return json.dumps([0]),200, {'ContentType':'application/json'}	
-	return json.dumps([int(e[0])]),200, {'ContentType':'application/json'}
+	return json.dumps([int(e)]),200, {'ContentType':'application/json'}
 
 @app.route("/api/v1/_count",methods=["DELETE"])
 def clear_http_request():
@@ -382,7 +382,7 @@ def clear_http_request():
 		abort(405,"method not allowed")
 	
 	file=open("text.txt","w")
-	file.write("%d %d"%(0,0))		
+	file.write("0")		
 
 	file.close()
 	return json.dumps({'success':"cleared successfully"}), 200, {'ContentType':'application/json'}
@@ -396,7 +396,7 @@ def ride_count():
 	
 	#d=[rideId]
 	user_list=[]
-	rideid_check=requests.post("http://18.212.183.73:80/api/v1/db/read",json={"insert":[],"column":["count(*) as count"],"table":"rides","where":[]})
+	rideid_check=requests.post("http://18.234.100.70:80/api/v1/db/read",json={"insert":[],"column":["count(*) as count"],"table":"rides","where":[]})
 	
 	if(rideid_check.json().get("response")==1):
 		print(rideid_check.json().get("count"),"ssss")
